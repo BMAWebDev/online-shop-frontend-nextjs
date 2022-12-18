@@ -153,7 +153,7 @@ export default function Header(): ReactElement {
                         </button>
 
                         <p>
-                          Don't have an account?{" "}
+                          Don&apos;t have an account?{" "}
                           <Link
                             href="/register"
                             passHref={true}
