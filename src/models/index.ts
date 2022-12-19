@@ -1,3 +1,3 @@
-import loginModel from "./login";
+import { loginModel, loginInitialValues } from "./login";
 
-export { loginModel };
+export { loginModel, loginInitialValues };

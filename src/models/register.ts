@@ -1,7 +1,9 @@
 import * as yup from "yup";
 import config from "src/config";
 
-export const loginModel = yup.object().shape({
+export const registerModel = yup.object().shape({
+  last_name: yup.string().required("Last name is required."),
+  first_name: yup.string().required("First name is required."),
   email: yup
     .string()
     .email("Email must be valid")
@@ -15,7 +17,9 @@ export const loginModel = yup.object().shape({
     ),
 });
 
-export const loginInitialValues = {
+export const registerInitialValues = {
+  last_name: "",
+  first_name: "",
   email: "",
   password: "",
 };

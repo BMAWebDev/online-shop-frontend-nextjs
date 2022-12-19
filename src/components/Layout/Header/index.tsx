@@ -12,7 +12,9 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Formik, Field, Form } from "formik";
-import { loginModel } from "src/models";
+
+// Models
+import { loginModel, loginInitialValues } from "src/models";
 
 export default function Header(): ReactElement {
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownMenus | "">(
@@ -149,7 +151,7 @@ export default function Header(): ReactElement {
                 onClick={(e) => e.stopPropagation()}
               >
                 <Formik
-                  initialValues={{ email: "", password: "" }}
+                  initialValues={loginInitialValues}
                   onSubmit={(values) => {
                     console.log(values);
                   }}

@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;600;700&display=swap");
 
-// import all bootstrap styles
 @import "../../node_modules/bootstrap";
 
 @import "./colors";
@@ -35,34 +34,4 @@ p {
 
 .error {
   color: #ff8ca8;
-}
-
-// stiluri specifice register, de mutat:
-button {
-  padding: 15px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 0;
-  box-shadow: 0px 0px 10px #fefefe;
-}
-
-button:hover {
-  background-color: red;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-}
-
-.form-group input {
-  padding: 7px 10px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 0;
-  outline: none;
 }
