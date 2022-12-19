@@ -21,8 +21,6 @@ export default function Header(): ReactElement {
 
   const router = useRouter();
 
-  console.log(router);
-
   // blacklist means where not to show the specific element, in our case the second line
   const routesBlacklist = ["/register", "/login"];
   const isSecondLineValid = (): boolean => {
@@ -58,7 +56,14 @@ export default function Header(): ReactElement {
         )}
       >
         <Link href="/" passHref={true}>
-          <Image src="/img/logo.png" width={250} height={100} alt="" priority />
+          <Image
+            src="/img/logo.png"
+            className={cs(s.logo)}
+            width={250}
+            height={100}
+            alt=""
+            priority
+          />
         </Link>
 
         <div className={cs(s.myDetails, "d-flex")}>
@@ -75,14 +80,17 @@ export default function Header(): ReactElement {
               height={32}
             />
 
-            <p>My cart</p>
+            <p className={cs(s.hideMobile)}>My cart</p>
 
             <Image
               src="/img/icons/arrow-down.svg"
               alt=""
               width={16}
               height={16}
-              className={selectedDropdown == "cart" ? "rotate-180" : ""}
+              className={cs(
+                s.hideMobile,
+                selectedDropdown == "cart" ? "rotate-180" : ""
+              )}
             />
 
             {selectedDropdown == "cart" && (
@@ -122,14 +130,17 @@ export default function Header(): ReactElement {
               style={{ filter: "invert(1)" }}
             />
 
-            <p>My account</p>
+            <p className={cs(s.hideMobile)}>My account</p>
 
             <Image
               src="/img/icons/arrow-down.svg"
               alt=""
               width={16}
               height={16}
-              className={selectedDropdown == "account" ? "rotate-180" : ""}
+              className={cs(
+                s.hideMobile,
+                selectedDropdown == "account" ? "rotate-180" : ""
+              )}
             />
 
             {selectedDropdown == "account" && (
@@ -270,14 +281,7 @@ export default function Header(): ReactElement {
           </Link>
 
           <Link href="/app-description.pdf" passHref={true}>
-            <p
-              className={cs(
-                s.cardElement,
-                router.route.includes("/about-us") ? s.active : ""
-              )}
-            >
-              About us
-            </p>
+            <p className={cs(s.cardElement)}>About us</p>
           </Link>
         </div>
       )}

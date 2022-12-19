@@ -1,6 +1,13 @@
 $active-color: #615b5b;
 
 .header {
+  .logo {
+    @media screen and (max-width: 375px) {
+      width: 200px;
+      height: 75px;
+    }
+  }
+
   .menuDropdown {
     position: absolute;
     top: 50px;
@@ -9,6 +16,12 @@ $active-color: #615b5b;
     border-radius: 8px;
     right: 0;
     z-index: 1;
+  }
+
+  .hideMobile {
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
   }
 
   .firstLine {
@@ -24,6 +37,10 @@ $active-color: #615b5b;
 
         .cartDropdown {
           width: 400px;
+
+          @media screen and (max-width: 500px) {
+            width: 200px;
+          }
         }
 
         .accountDropdown {
@@ -48,6 +65,10 @@ $active-color: #615b5b;
             }
           }
         }
+      }
+
+      @media screen and (max-width: 600px) {
+        display: none;
       }
     }
   }
@@ -79,7 +100,7 @@ $active-color: #615b5b;
         top: 45px;
         width: max-content;
         list-style-type: none;
-        left: -45px;
+        left: 0;
 
         .productsDropdownElement {
           padding: 5px;
