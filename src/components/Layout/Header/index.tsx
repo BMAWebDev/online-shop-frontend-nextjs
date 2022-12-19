@@ -1,5 +1,6 @@
 // Types
 import { ReactElement } from "react";
+type DropdownMenus = "account" | "cart" | "products";
 
 // Styles
 import cs from "classnames";
@@ -14,9 +15,13 @@ import { Formik, Field, Form } from "formik";
 import { loginModel } from "src/models";
 
 export default function Header(): ReactElement {
-  const [selectedDropdown, setSelectedDropdown] = useState<string>("");
+  const [selectedDropdown, setSelectedDropdown] = useState<DropdownMenus | "">(
+    ""
+  );
 
   const router = useRouter();
+
+  console.log(router);
 
   // blacklist means where not to show the specific element, in our case the second line
   const routesBlacklist = ["/register", "/login"];
@@ -25,6 +30,24 @@ export default function Header(): ReactElement {
 
     return true;
   };
+
+  const productsCategories = [
+    {
+      name: "Articole de gradinarit",
+      slug: "articole-de-gradinarit",
+      id: 0,
+    },
+    {
+      name: "Teste de dev",
+      slug: "teste-de-dev",
+      id: 1,
+    },
+    {
+      name: "Test123",
+      slug: "test123",
+      id: 2,
+    },
+  ];
 
   return (
     <header className={cs(s.header)}>
@@ -182,7 +205,20 @@ export default function Header(): ReactElement {
 
       {isSecondLineValid() && (
         <div className={cs(s.secondLine, "d-flex align-items-center")}>
-          <p className={cs(s.cardElement)}>
+          <div
+            className={cs(
+              s.cardElement,
+              selectedDropdown == "products" ||
+                router.route.includes("/products")
+                ? s.active
+                : ""
+            )}
+            onClick={() =>
+              setSelectedDropdown(
+                selectedDropdown == "products" ? "" : "products"
+              )
+            }
+          >
             <Image
               src="/img/icons/menu-icon.svg"
               width={15}
@@ -190,14 +226,58 @@ export default function Header(): ReactElement {
               alt=""
             />
             <span>Products</span>
-          </p>
+
+            {selectedDropdown == "products" && (
+              <ul
+                className={cs(s.productsDropdown, s.menuDropdown)}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {productsCategories.map((category) => {
+                  return (
+                    <Link
+                      passHref={true}
+                      href={`/products?cat=${category.slug}`}
+                      as="/products"
+                      key={category.id}
+                    >
+                      <li className={cs(s.productsDropdownElement)}>
+                        {category.name}
+                      </li>
+                    </Link>
+                  );
+                })}
+
+                <Link passHref={true} href="/products">
+                  <li
+                    className={cs(s.productsDropdownElement, s.viewAllProducts)}
+                  >
+                    View all products
+                  </li>
+                </Link>
+              </ul>
+            )}
+          </div>
 
           <Link href="/contact" passHref={true}>
-            <p className={cs(s.cardElement)}>Contact</p>
+            <p
+              className={cs(
+                s.cardElement,
+                router.route.includes("/contact") ? s.active : ""
+              )}
+            >
+              Contact
+            </p>
           </Link>
 
           <Link href="/app-description.pdf" passHref={true}>
-            <p className={cs(s.cardElement)}>About us</p>
+            <p
+              className={cs(
+                s.cardElement,
+                router.route.includes("/about-us") ? s.active : ""
+              )}
+            >
+              About us
+            </p>
           </Link>
         </div>
       )}
