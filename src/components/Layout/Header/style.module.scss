@@ -1,13 +1,6 @@
 $active-color: #615b5b;
 
 .header {
-  .logo {
-    @media screen and (max-width: 375px) {
-      width: 200px;
-      height: 75px;
-    }
-  }
-
   .menuDropdown {
     position: absolute;
     top: 50px;

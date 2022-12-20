@@ -6,6 +6,9 @@ type DropdownMenus = "account" | "cart" | "products";
 import cs from "classnames";
 import s from "./style.module.scss";
 
+// Components
+import Logo from "../Logo";
+
 // Modules
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -57,16 +60,7 @@ export default function Header(): ReactElement {
           "d-flex align-items-center justify-content-between"
         )}
       >
-        <Link href="/" passHref={true}>
-          <Image
-            src="/img/logo.png"
-            className={cs(s.logo)}
-            width={250}
-            height={100}
-            alt=""
-            priority
-          />
-        </Link>
+        <Logo />
 
         <div className={cs(s.myDetails, "d-flex")}>
           <div
