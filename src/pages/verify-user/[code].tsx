@@ -1,26 +1,17 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+// Types
+import { ReactElement } from "react";
 
-import { verifyUser } from 'src/functions';
+// Components
+import { Message } from "src/components/VerifyUser";
 
-export default function VerifyUser() {
-  const router = useRouter();
+// Styles
+import cs from "classnames";
+import s from "src/components/VerifyUser/style.module.scss";
 
-  const [statusMessage, setStatusMessage] = useState<string>(
-    'Se asteapta confirmarea'
+export default function VerifyUser(): ReactElement {
+  return (
+    <div id={cs(s.pageVerifyUser)} className="container">
+      <Message />
+    </div>
   );
-
-  useEffect(() => {
-    if (router.query.code) {
-      verifyUser({ code: router.query.code })
-        .then((res: any) => {
-          setStatusMessage(res.message);
-        })
-        .catch((err) => {
-          setStatusMessage(err.message);
-        });
-    }
-  }, [router.query.code]);
-
-  return <div>{statusMessage}</div>;
 }

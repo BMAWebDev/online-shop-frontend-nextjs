@@ -15,6 +15,9 @@ export const registerModel = yup.object().shape({
       config.password_min_characters,
       "Password is too short. Minimum: " + config.password_min_characters
     ),
+  confirm_password: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords do not match."),
 });
 
 export const registerInitialValues = {
@@ -22,4 +25,5 @@ export const registerInitialValues = {
   first_name: "",
   email: "",
   password: "",
+  confirm_password: "",
 };

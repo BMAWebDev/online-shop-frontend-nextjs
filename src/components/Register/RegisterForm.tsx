@@ -33,8 +33,12 @@ export default function RegisterForm() {
             return false;
           }
 
-          const res: any = await register(values);
-          toast.success(res.message);
+          try {
+            const res: any = await register(values);
+            toast.success(res.message);
+          } catch (err: any) {
+            toast.error(err.message);
+          }
         }}
         validationSchema={registerModel}
       >
@@ -65,6 +69,14 @@ export default function RegisterForm() {
             <Group
               labelText="Password:"
               name="password"
+              type="password"
+              errors={errors}
+              touched={touched}
+            />
+
+            <Group
+              labelText="Confirm password:"
+              name="confirm_password"
               type="password"
               errors={errors}
               touched={touched}
