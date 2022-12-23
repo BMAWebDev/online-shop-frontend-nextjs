@@ -1,8 +1,13 @@
 import axios from "axios";
 import Cookies from "universal-cookie/cjs/Cookies";
 
+const backendURL =
+  process.env.NODE_ENV == "production"
+    ? process.env.SERVER_URL
+    : "http://localhost:9000/";
+
 const Axios = axios.create({
-  baseURL: process.env.SERVER_URL + "/",
+  baseURL: backendURL,
   withCredentials: true,
   timeout: 4000,
 });

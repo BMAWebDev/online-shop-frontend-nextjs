@@ -1,11 +1,16 @@
-import axios from 'axios';
+import axios from "axios";
+
+const backendURL =
+  process.env.NODE_ENV == "production"
+    ? process.env.SERVER_URL
+    : "http://localhost:9000/";
 
 const Axios = axios.create({
-  baseURL: process.env.SERVER_URL + '/',
+  baseURL: backendURL,
   withCredentials: false,
   timeout: 4000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
