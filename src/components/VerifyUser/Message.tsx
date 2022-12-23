@@ -17,7 +17,7 @@ export default function Message() {
 
   useEffect(() => {
     if (router.query.code) {
-      verifyUser({ code: router.query.code })
+      verifyUser({ code: router.query.code as string })
         .then((res: any) => {
           setStatusMessage(res.message);
         })

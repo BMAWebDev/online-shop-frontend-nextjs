@@ -1,11 +1,31 @@
-import axios from "src/lib/axios";
+import { axios, axiosAuth } from "src/lib";
 
-export const register = async (data: any) => {
-  console.log(data);
-
+interface IRegister {
+  last_name: string;
+  first_name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+export const register = async (data: IRegister) => {
   return await axios.post("register", data);
 };
 
-export const verifyUser = async (data: any) => {
+interface IVerifyUser {
+  code: string;
+}
+export const verifyUser = async (data: IVerifyUser) => {
   return await axios.post("verify-user", data);
+};
+
+interface ILogin {
+  email: string;
+  password: string;
+}
+export const login = async (data: ILogin) => {
+  return await axios.post("login", data);
+};
+
+export const getUser = async (id: number) => {
+  return await axiosAuth.get(`users/${id}`);
 };

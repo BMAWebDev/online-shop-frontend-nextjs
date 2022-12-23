@@ -7,6 +7,7 @@ interface IProps {
   type?: string;
   errors?: Record<string, string | undefined>;
   touched?: Record<string, boolean | undefined>;
+  className?: string;
 }
 
 // Modules
@@ -24,6 +25,7 @@ export default function Group({
   type,
   errors,
   touched,
+  className,
 }: IProps): ReactElement {
   return (
     <div className={cs(s.formGroup, "d-flex flex-column")}>
@@ -33,7 +35,7 @@ export default function Group({
         type={type ?? "text"}
         id={name}
         name={name}
-        className={cs(s.input)}
+        className={cs(s.input, className && `${className}`)}
       />
 
       <Error name={name} errors={errors} touched={touched} />

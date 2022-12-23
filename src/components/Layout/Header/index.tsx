@@ -1,30 +1,68 @@
 // Types
 import { ReactElement } from "react";
+import { IUser } from "src/types";
 type DropdownMenus = "account" | "cart" | "products";
+
+interface ILoginResponse {
+  message: string;
+  accessToken: string;
+  user: IUser;
+}
 
 // Styles
 import cs from "classnames";
 import s from "./style.module.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 // Components
 import Logo from "../Logo";
+import { Group } from "src/components/Form";
 
 // Modules
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Formik, Field, Form } from "formik";
+import { Formik, Form } from "formik";
+import Cookies from "universal-cookie";
 
 // Models
 import { loginModel, loginInitialValues } from "src/models";
+
+// Functions
+import { login } from "src/functions";
+import { toast, ToastContainer } from "react-toastify";
+
+// Store
+import userStore from "src/store";
 
 export default function Header(): ReactElement {
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownMenus | "">(
     ""
   );
+  const [myAccountText, setMyAccountText] = useState<string>("My account");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const router = useRouter();
+  const store = userStore();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      userStore.subscribe((state) => {
+        if (state.user) {
+          setIsLoggedIn(true);
+
+          setMyAccountText(
+            `Hello, ${state.user.last_name} ${state.user.first_name}`
+          );
+        } else {
+          setIsLoggedIn(false);
+
+          setMyAccountText("My account");
+        }
+      });
+    }
+  }, []);
 
   // blacklist means where not to show the specific element, in our case the second line
   const routesBlacklist = ["/register", "/login"];
@@ -51,6 +89,15 @@ export default function Header(): ReactElement {
       id: 2,
     },
   ];
+
+  const logout = () => {
+    const cookies = new Cookies();
+    cookies.remove("access-token");
+
+    store.setUser(null);
+
+    toast.success("Successfully logged out.");
+  };
 
   return (
     <header className={cs(s.header)}>
@@ -126,7 +173,7 @@ export default function Header(): ReactElement {
               style={{ filter: "invert(1)" }}
             />
 
-            <p className={cs(s.hideMobile)}>My account</p>
+            <p className={cs(s.hideMobile)}>{myAccountText}</p>
 
             <Image
               src="/img/icons/arrow-down.svg"
@@ -144,66 +191,80 @@ export default function Header(): ReactElement {
                 className={cs(s.accountDropdown, s.menuDropdown)}
                 onClick={(e) => e.stopPropagation()}
               >
-                <Formik
-                  initialValues={loginInitialValues}
-                  onSubmit={(values) => {
-                    console.log(values);
-                  }}
-                  validationSchema={loginModel}
-                >
-                  {({ errors, touched }) => (
-                    <Form>
-                      <label htmlFor="email">Email address: </label>
-                      <Field
-                        id="email"
-                        name="email"
-                        type="email"
-                        className={cs(s.formInput)}
-                      />
-                      {errors.email && touched.email ? (
-                        <p className="error">{errors.email}</p>
-                      ) : null}
+                {(!isLoggedIn && (
+                  <Formik
+                    initialValues={loginInitialValues}
+                    onSubmit={async (values) => {
+                      try {
+                        const loginRes = (await login(
+                          values
+                        )) as unknown as ILoginResponse;
 
-                      <label htmlFor="password">Password: </label>
-                      <Field
-                        id="password"
-                        name="password"
-                        type="password"
-                        className={cs(s.formInput)}
-                      />
-                      {errors.password && touched.password ? (
-                        <p className="error">{errors.password}</p>
-                      ) : null}
+                        // save the access token on cookie to be validated on the server requests, but the user on local storage for client manipulation
+                        const cookies = new Cookies();
+                        cookies.set("access-token", loginRes.accessToken);
+                        store.setUser(loginRes.user);
 
-                      <div
-                        className={cs(s.buttonsContainer, "d-flex flex-column")}
-                      >
-                        <button type="submit" className={cs(s.loginBtn)}>
-                          Login
-                        </button>
+                        toast.success(loginRes.message);
+                      } catch (err: any) {
+                        toast.error(err.message);
+                      }
+                    }}
+                    validationSchema={loginModel}
+                  >
+                    {({ errors, touched }) => (
+                      <Form>
+                        <Group
+                          labelText="Email address:"
+                          name="email"
+                          type="email"
+                          errors={errors}
+                          touched={touched}
+                          className={cs(s.formInput)}
+                        />
 
-                        <p>
-                          Don&apos;t have an account?{" "}
-                          <Link
-                            href="/register"
-                            passHref={true}
-                            onClick={() => setSelectedDropdown("")}
-                          >
-                            <span
-                              style={{
-                                color: "cyan",
-                                textDecoration: "underline",
-                              }}
+                        <Group
+                          labelText="Password:"
+                          name="password"
+                          type="password"
+                          errors={errors}
+                          touched={touched}
+                          className={cs(s.formInput)}
+                        />
+
+                        <div
+                          className={cs(
+                            s.buttonsContainer,
+                            "d-flex flex-column"
+                          )}
+                        >
+                          <button type="submit" className={cs(s.loginBtn)}>
+                            Login
+                          </button>
+
+                          <p>
+                            Don&apos;t have an account?{" "}
+                            <Link
+                              href="/register"
+                              passHref={true}
+                              onClick={() => setSelectedDropdown("")}
                             >
-                              Click here
-                            </span>
-                          </Link>{" "}
-                          to register.
-                        </p>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
+                              <span
+                                style={{
+                                  color: "cyan",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                Click here
+                              </span>
+                            </Link>{" "}
+                            to register.
+                          </p>
+                        </div>
+                      </Form>
+                    )}
+                  </Formik>
+                )) || <p onClick={() => logout()}>Log out</p>}
               </div>
             )}
           </div>
@@ -281,6 +342,19 @@ export default function Header(): ReactElement {
           </Link>
         </div>
       )}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </header>
   );
 }
