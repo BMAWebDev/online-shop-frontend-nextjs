@@ -196,9 +196,16 @@ export default function Header(): ReactElement {
                     initialValues={loginInitialValues}
                     onSubmit={async (values) => {
                       try {
+                        console.log(
+                          process.env.SERVER_URL,
+                          process.env.NODE_ENV
+                        );
+
                         const loginRes = (await login(
                           values
                         )) as unknown as ILoginResponse;
+
+                        console.log(loginRes);
 
                         // save the access token on cookie to be validated on the server requests, but the user on local storage for client manipulation
                         const cookies = new Cookies();
@@ -207,6 +214,8 @@ export default function Header(): ReactElement {
 
                         toast.success(loginRes.message);
                       } catch (err: any) {
+                        console.log(err);
+
                         toast.error(err.message);
                       }
                     }}
