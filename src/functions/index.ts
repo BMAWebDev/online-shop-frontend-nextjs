@@ -1,31 +1,10 @@
-import { axios, axiosAuth } from "src/lib";
+// Auth
+import { register, login, verifyUser } from "./auth";
 
-interface IRegister {
-  last_name: string;
-  first_name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
-export const register = async (data: IRegister) => {
-  return await axios.post("register", data);
-};
+// Requests
+import { getUser } from "./requests";
 
-interface IVerifyUser {
-  code: string;
-}
-export const verifyUser = async (data: IVerifyUser) => {
-  return await axios.post("verify-user", data);
-};
+// Helpers
+import { isStaff } from "./helpers";
 
-interface ILogin {
-  email: string;
-  password: string;
-}
-export const login = async (data: ILogin) => {
-  return await axios.post("login", data);
-};
-
-export const getUser = async (id: number) => {
-  return await axiosAuth.get(`users/${id}`);
-};
+export { register, login, verifyUser, getUser, isStaff };

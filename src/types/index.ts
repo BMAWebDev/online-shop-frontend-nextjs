@@ -1,8 +1,11 @@
+export type Role = "customer" | "editor" | "admin" | "ceo";
+export type StaffRole = "editor" | "admin" | "ceo";
+
 export interface IUser {
   id: number;
   username?: string;
   email: string;
-  password: string;
+  role: Role;
   last_name: string;
   first_name: string;
   verification_code: string;

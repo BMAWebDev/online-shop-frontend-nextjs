@@ -39,7 +39,7 @@ export default function Layout({
 
   return (
     <div id={cs(s.layout)}>
-      <Header />
+      <Header isPrivate={isPrivate} />
 
       <main
         className="page-content"
@@ -48,7 +48,7 @@ export default function Layout({
         {children}
       </main>
 
-      <Footer />
+      {!isPrivate && <Footer />}
     </div>
   );
 }

@@ -9,6 +9,10 @@ interface ILoginResponse {
   user: IUser;
 }
 
+interface IProps {
+  isPrivate?: boolean;
+}
+
 // Styles
 import cs from "classnames";
 import s from "./style.module.scss";
@@ -30,18 +34,19 @@ import Cookies from "universal-cookie";
 import { loginModel, loginInitialValues } from "src/models";
 
 // Functions
-import { login } from "src/functions";
+import { login, isStaff } from "src/functions";
 import { toast, ToastContainer } from "react-toastify";
 
 // Store
 import userStore from "src/store";
 
-export default function Header(): ReactElement {
+export default function Header({ isPrivate }: IProps): ReactElement {
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownMenus | "">(
     ""
   );
   const [myAccountText, setMyAccountText] = useState<string>("My account");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<IUser | null>(null);
 
   const router = useRouter();
   const store = userStore();
@@ -49,6 +54,8 @@ export default function Header(): ReactElement {
   useEffect(() => {
     if (typeof window !== "undefined" && store.user) {
       setIsLoggedIn(true);
+
+      setUser(store.user);
 
       setMyAccountText(
         `Hello, ${store.user.last_name} ${store.user.first_name}`
@@ -62,11 +69,15 @@ export default function Header(): ReactElement {
         if (state.user) {
           setIsLoggedIn(true);
 
+          setUser(state.user);
+
           setMyAccountText(
             `Hello, ${state.user.last_name} ${state.user.first_name}`
           );
         } else {
           setIsLoggedIn(false);
+
+          setUser(null);
 
           setMyAccountText("My account");
         }
@@ -100,11 +111,142 @@ export default function Header(): ReactElement {
     },
   ];
 
+  const defaultSecondLine = () => {
+    return (
+      <>
+        <div
+          className={cs(
+            s.cardElement,
+            selectedDropdown == "products" || router.route.includes("/products")
+              ? s.active
+              : ""
+          )}
+          onClick={() =>
+            setSelectedDropdown(
+              selectedDropdown == "products" ? "" : "products"
+            )
+          }
+        >
+          <Image src="/img/icons/menu-icon.svg" width={15} height={15} alt="" />
+          <span>Products</span>
+
+          {selectedDropdown == "products" && (
+            <ul
+              className={cs(s.productsDropdown, s.menuDropdown)}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {productsCategories.map((category) => {
+                return (
+                  <Link
+                    passHref={true}
+                    href={`/products?cat=${category.slug}`}
+                    as="/products"
+                    key={category.id}
+                  >
+                    <li className={cs(s.productsDropdownElement)}>
+                      {category.name}
+                    </li>
+                  </Link>
+                );
+              })}
+
+              <Link passHref={true} href="/products">
+                <li
+                  className={cs(s.productsDropdownElement, s.viewAllProducts)}
+                >
+                  View all products
+                </li>
+              </Link>
+            </ul>
+          )}
+        </div>
+
+        <Link href="/contact" passHref={true}>
+          <p
+            className={cs(
+              s.cardElement,
+              router.route.includes("/contact") ? s.active : ""
+            )}
+          >
+            Contact
+          </p>
+        </Link>
+
+        <Link href="/app-description.pdf" passHref={true}>
+          <p className={cs(s.cardElement)}>About us</p>
+        </Link>
+      </>
+    );
+  };
+
+  const privateSecondLine = () => {
+    return (
+      <>
+        <div
+          className={cs(
+            s.cardElement,
+            selectedDropdown == "products" || router.route.includes("/products")
+              ? s.active
+              : ""
+          )}
+          onClick={() =>
+            setSelectedDropdown(
+              selectedDropdown == "products" ? "" : "products"
+            )
+          }
+        >
+          <Image src="/img/icons/menu-icon.svg" width={15} height={15} alt="" />
+          <span>Products</span>
+
+          {selectedDropdown == "products" && (
+            <ul
+              className={cs(s.productsDropdown, s.menuDropdown)}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {productsCategories.map((category) => {
+                return (
+                  <Link
+                    passHref={true}
+                    href={`/products?cat=${category.slug}`}
+                    as="/products"
+                    key={category.id}
+                  >
+                    <li className={cs(s.productsDropdownElement)}>
+                      {category.name}
+                    </li>
+                  </Link>
+                );
+              })}
+
+              <Link passHref={true} href="/products">
+                <li
+                  className={cs(s.productsDropdownElement, s.viewAllProducts)}
+                >
+                  View all products
+                </li>
+              </Link>
+            </ul>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  const renderSecondLine = () => {
+    return (
+      <div className={cs(s.secondLine, "d-flex align-items-center")}>
+        {(!isPrivate && defaultSecondLine()) ||
+          (isPrivate && privateSecondLine())}
+      </div>
+    );
+  };
+
   const logout = () => {
     const cookies = new Cookies();
     cookies.remove("access-token");
 
     store.setUser(null);
+    setUser(null);
 
     toast.success("Successfully logged out.");
   };
@@ -120,52 +262,54 @@ export default function Header(): ReactElement {
         <Logo />
 
         <div className={cs(s.myDetails, "d-flex")}>
-          <div
-            className={cs(s.myDetailsElement, "d-flex align-items-center")}
-            onClick={() =>
-              setSelectedDropdown(selectedDropdown == "cart" ? "" : "cart")
-            }
-          >
-            <Image
-              src="/img/icons/shopping-cart.png"
-              alt=""
-              width={32}
-              height={32}
-            />
+          {!isPrivate && (
+            <div
+              className={cs(s.myDetailsElement, "d-flex align-items-center")}
+              onClick={() =>
+                setSelectedDropdown(selectedDropdown == "cart" ? "" : "cart")
+              }
+            >
+              <Image
+                src="/img/icons/shopping-cart.png"
+                alt=""
+                width={32}
+                height={32}
+              />
 
-            <p className={cs(s.hideMobile)}>My cart</p>
+              <p className={cs(s.hideMobile)}>My cart</p>
 
-            <Image
-              src="/img/icons/arrow-down.svg"
-              alt=""
-              width={16}
-              height={16}
-              className={cs(
-                s.hideMobile,
-                selectedDropdown == "cart" ? "rotate-180" : ""
+              <Image
+                src="/img/icons/arrow-down.svg"
+                alt=""
+                width={16}
+                height={16}
+                className={cs(
+                  s.hideMobile,
+                  selectedDropdown == "cart" ? "rotate-180" : ""
+                )}
+              />
+
+              {selectedDropdown == "cart" && (
+                <div
+                  className={cs(s.cartDropdown, s.menuDropdown)}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Your cart is currently empty.{" "}
+                  <Link href="/products" passHref={true}>
+                    <span
+                      style={{
+                        color: "cyan",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      Click here
+                    </span>
+                  </Link>{" "}
+                  to see the products available.
+                </div>
               )}
-            />
-
-            {selectedDropdown == "cart" && (
-              <div
-                className={cs(s.cartDropdown, s.menuDropdown)}
-                onClick={(e) => e.stopPropagation()}
-              >
-                Your cart is currently empty.{" "}
-                <Link href="/products" passHref={true}>
-                  <span
-                    style={{
-                      color: "cyan",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    Click here
-                  </span>
-                </Link>{" "}
-                to see the products available.
-              </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div
             className={cs(s.myDetailsElement, "d-flex align-items-center")}
@@ -216,6 +360,7 @@ export default function Header(): ReactElement {
                           maxAge: 24 * 60 * 60, // cookie expires in: 1 day (60 = 1 minute)
                         });
                         store.setUser(loginRes.user);
+                        setUser(loginRes.user);
 
                         toast.success(loginRes.message);
                       } catch (err: any) {
@@ -250,7 +395,15 @@ export default function Header(): ReactElement {
                             "d-flex flex-column"
                           )}
                         >
-                          <button type="submit" className={cs(s.loginBtn)}>
+                          <button
+                            type="submit"
+                            className={cs(s.loginBtn)}
+                            onClick={() => {
+                              setTimeout(() => {
+                                setSelectedDropdown("");
+                              }, 500);
+                            }}
+                          >
                             Login
                           </button>
 
@@ -276,84 +429,28 @@ export default function Header(): ReactElement {
                       </Form>
                     )}
                   </Formik>
-                )) || <p onClick={() => logout()}>Log out</p>}
+                )) || (
+                  <>
+                    <Link
+                      href={user && isStaff(user.role) ? "/admin" : "/profile"}
+                      passHref={true}
+                    >
+                      <p>
+                        Go to{" "}
+                        {user && isStaff(user.role) ? "admin panel" : "profile"}
+                      </p>
+                    </Link>
+
+                    <p onClick={() => logout()}>Log out</p>
+                  </>
+                )}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {isSecondLineValid() && (
-        <div className={cs(s.secondLine, "d-flex align-items-center")}>
-          <div
-            className={cs(
-              s.cardElement,
-              selectedDropdown == "products" ||
-                router.route.includes("/products")
-                ? s.active
-                : ""
-            )}
-            onClick={() =>
-              setSelectedDropdown(
-                selectedDropdown == "products" ? "" : "products"
-              )
-            }
-          >
-            <Image
-              src="/img/icons/menu-icon.svg"
-              width={15}
-              height={15}
-              alt=""
-            />
-            <span>Products</span>
-
-            {selectedDropdown == "products" && (
-              <ul
-                className={cs(s.productsDropdown, s.menuDropdown)}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {productsCategories.map((category) => {
-                  return (
-                    <Link
-                      passHref={true}
-                      href={`/products?cat=${category.slug}`}
-                      as="/products"
-                      key={category.id}
-                    >
-                      <li className={cs(s.productsDropdownElement)}>
-                        {category.name}
-                      </li>
-                    </Link>
-                  );
-                })}
-
-                <Link passHref={true} href="/products">
-                  <li
-                    className={cs(s.productsDropdownElement, s.viewAllProducts)}
-                  >
-                    View all products
-                  </li>
-                </Link>
-              </ul>
-            )}
-          </div>
-
-          <Link href="/contact" passHref={true}>
-            <p
-              className={cs(
-                s.cardElement,
-                router.route.includes("/contact") ? s.active : ""
-              )}
-            >
-              Contact
-            </p>
-          </Link>
-
-          <Link href="/app-description.pdf" passHref={true}>
-            <p className={cs(s.cardElement)}>About us</p>
-          </Link>
-        </div>
-      )}
+      {isSecondLineValid() && renderSecondLine()}
 
       <ToastContainer
         position="top-center"
