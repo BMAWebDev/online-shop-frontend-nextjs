@@ -47,6 +47,16 @@ export default function Header(): ReactElement {
   const store = userStore();
 
   useEffect(() => {
+    if (typeof window !== "undefined" && store.user) {
+      setIsLoggedIn(true);
+
+      setMyAccountText(
+        `Hello, ${store.user.last_name} ${store.user.first_name}`
+      );
+    }
+  }, [store]);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       userStore.subscribe((state) => {
         if (state.user) {
@@ -196,26 +206,19 @@ export default function Header(): ReactElement {
                     initialValues={loginInitialValues}
                     onSubmit={async (values) => {
                       try {
-                        console.log(
-                          process.env.SERVER_URL,
-                          process.env.NODE_ENV
-                        );
-
                         const loginRes = (await login(
                           values
                         )) as unknown as ILoginResponse;
 
-                        console.log(loginRes);
-
                         // save the access token on cookie to be validated on the server requests, but the user on local storage for client manipulation
                         const cookies = new Cookies();
-                        cookies.set("access-token", loginRes.accessToken);
+                        cookies.set("access-token", loginRes.accessToken, {
+                          maxAge: 24 * 60 * 60, // cookie expires in: 1 day (60 = 1 minute)
+                        });
                         store.setUser(loginRes.user);
 
                         toast.success(loginRes.message);
                       } catch (err: any) {
-                        console.log(err);
-
                         toast.error(err.message);
                       }
                     }}
