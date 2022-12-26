@@ -8,4 +8,17 @@
   &:hover {
     background-color: #f7d475;
   }
+
+  &.buttonDanger {
+    background: #f60b44;
+    box-shadow: 0 0 10px #f60b44;
+
+    &:hover {
+      background: #f73b69;
+    }
+  }
+
+  &.buttonSmall {
+    padding: 3px 15px;
+  }
 }

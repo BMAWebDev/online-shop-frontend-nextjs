@@ -139,7 +139,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                 return (
                   <Link
                     passHref={true}
-                    href={`/products?cat=${category.slug}`}
+                    href={`/products?cat=${category.id}`}
                     as="/products"
                     key={category.id}
                   >
@@ -185,7 +185,8 @@ export default function Header({ isPrivate }: IProps): ReactElement {
         <div
           className={cs(
             s.cardElement,
-            selectedDropdown == "products" || router.route.includes("/products")
+            selectedDropdown == "products" ||
+              router.route.includes("/admin/products")
               ? s.active
               : ""
           )}
@@ -203,26 +204,15 @@ export default function Header({ isPrivate }: IProps): ReactElement {
               className={cs(s.productsDropdown, s.menuDropdown)}
               onClick={(e) => e.stopPropagation()}
             >
-              {productsCategories.map((category) => {
-                return (
-                  <Link
-                    passHref={true}
-                    href={`/products?cat=${category.slug}`}
-                    as="/products"
-                    key={category.id}
-                  >
-                    <li className={cs(s.productsDropdownElement)}>
-                      {category.name}
-                    </li>
-                  </Link>
-                );
-              })}
+              <Link passHref={true} href="/admin/products">
+                <li className={cs(s.productsDropdownElement)}>
+                  See all products
+                </li>
+              </Link>
 
-              <Link passHref={true} href="/products">
-                <li
-                  className={cs(s.productsDropdownElement, s.viewAllProducts)}
-                >
-                  View all products
+              <Link passHref={true} href="/admin/categories">
+                <li className={cs(s.productsDropdownElement)}>
+                  See all categories
                 </li>
               </Link>
             </ul>
