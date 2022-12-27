@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "universal-cookie/cjs/Cookies";
+import { getCookie } from "cookies-next";
 
 const backendURL =
   process.env.NODE_ENV == "production"
@@ -21,7 +21,9 @@ const error = async (err: any) => {
 };
 
 const bearerToken = (req: any) => {
-  const token = new Cookies().get("access-token");
+  let token = getCookie("access-token");
+
+  if (!token && req.data.token) token = req.data.token;
 
   req.headers.authorization = `Bearer ${token}`;
 

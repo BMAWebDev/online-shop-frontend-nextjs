@@ -1,9 +1,13 @@
 // Types
 import { ReactElement } from "react";
 import { GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { GetServerSideProps } from "next";
 
 // Components
 import { Table } from "src/components";
+
+// Auth
+import { checkAuth } from "src/auth";
 
 export default function Products(): ReactElement {
   const columns: GridColDef[] = [
@@ -56,3 +60,7 @@ export default function Products(): ReactElement {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return await checkAuth(context);
+};

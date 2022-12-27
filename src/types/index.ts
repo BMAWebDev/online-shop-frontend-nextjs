@@ -13,3 +13,10 @@ export interface IUser {
   created_at: string;
   verified_at?: string;
 }
+
+export interface IDecodedToken {
+  email: string;
+  id: number;
+  iat: number;
+  exp: number;
+}

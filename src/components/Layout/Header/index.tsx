@@ -28,7 +28,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Formik, Form } from "formik";
-import Cookies from "universal-cookie";
+
+import { setCookie, deleteCookie } from "cookies-next";
 
 // Models
 import { loginModel, loginInitialValues } from "src/models";
@@ -232,11 +233,12 @@ export default function Header({ isPrivate }: IProps): ReactElement {
   };
 
   const logout = () => {
-    const cookies = new Cookies();
-    cookies.remove("access-token");
+    deleteCookie("access-token");
 
     store.setUser(null);
     setUser(null);
+
+    router.push("/");
 
     toast.success("Successfully logged out.");
   };
@@ -345,8 +347,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                         )) as unknown as ILoginResponse;
 
                         // save the access token on cookie to be validated on the server requests, but the user on local storage for client manipulation
-                        const cookies = new Cookies();
-                        cookies.set("access-token", loginRes.accessToken, {
+                        setCookie("access-token", loginRes.accessToken, {
                           maxAge: 24 * 60 * 60, // cookie expires in: 1 day (60 = 1 minute)
                         });
                         store.setUser(loginRes.user);
