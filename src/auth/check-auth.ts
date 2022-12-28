@@ -6,8 +6,7 @@ import { IUser } from "src/types";
 import decodeToken from "./decode-token";
 
 // Functions
-import { getUser } from "src/functions";
-import { isStaff } from "src/functions";
+import { getUser, isStaff, getTokenFromCookie } from "src/functions";
 
 /**
  * @param {object} context
@@ -28,7 +27,7 @@ const checkAuth: GetServerSideProps = async (
 
   if (!cookie) return redirectOBJ;
 
-  const token = cookie.split("=")[1];
+  const token = getTokenFromCookie(cookie);
   const decodedToken = decodeToken(token);
 
   try {

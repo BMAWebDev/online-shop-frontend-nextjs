@@ -2,9 +2,10 @@
 import { ReactElement } from "react";
 import { GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import { GetServerSideProps } from "next";
+import { ICategory } from "src/types";
 
 interface IProps {
-  categories: any[];
+  categories: ICategory[];
 }
 
 // Components
@@ -27,16 +28,16 @@ export default function Categories({ categories }: IProps): ReactElement {
   ];
 
   // Columns data
-  const rows: GridRowsProp = [
-    {
-      id: 1,
-      col1: 1,
-      col2: "Telefoane colorate parfumate la 5 leila 5 leila 5 leila 5 leila 5 lei",
+  const rows: GridRowsProp = categories.map((category) => {
+    return {
+      id: category.id,
+      col1: category.id,
+      col2: category.name,
       col3: 3,
       col4: 2,
-      col5: "Draft",
-    },
-  ];
+      col5: category.publish_status,
+    };
+  });
 
   if (!categories.length)
     return (
@@ -62,14 +63,19 @@ export default function Categories({ categories }: IProps): ReactElement {
   );
 }
 
+import { getCategories, getTokenFromCookie } from "src/functions";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const authRes: any = await checkAuth(context);
+  const { req } = context;
   let { redirect, props } = authRes;
 
   if (redirect) return authRes;
 
-  // get categories... (waiting for backend controller to be created)
-  const categories: any = [];
+  const categoriesRes: any = await getCategories(
+    getTokenFromCookie(req.headers.cookie as string)
+  );
+
+  const categories: ICategory[] = categoriesRes.categories; // array of categories
   props = { ...props, categories };
 
   return {

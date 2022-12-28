@@ -2,9 +2,18 @@
 import { register, login, verifyUser } from "./auth";
 
 // Requests
-import { getUser } from "./requests";
+import { getUser, getProducts, getCategories } from "./requests";
 
 // Helpers
-import { isStaff } from "./helpers";
+import { isStaff, getTokenFromCookie } from "./helpers";
 
-export { register, login, verifyUser, getUser, isStaff };
+export {
+  register,
+  login,
+  verifyUser,
+  getUser,
+  isStaff,
+  getTokenFromCookie,
+  getCategories,
+  getProducts,
+};

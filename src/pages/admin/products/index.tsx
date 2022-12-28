@@ -2,9 +2,10 @@
 import { ReactElement } from "react";
 import { GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import { GetServerSideProps } from "next";
+import { IProduct } from "src/types";
 
 interface IProps {
-  products: any[];
+  products: IProduct[];
 }
 
 // Components
@@ -24,23 +25,23 @@ export default function Products({ products }: IProps): ReactElement {
     { field: "col3", headerName: "SKU", flex: 0.5 },
     { field: "col4", headerName: "Price", flex: 0.5 },
     { field: "col5", headerName: "Stock quantity", flex: 0.5 },
-    { field: "col6", headerName: "Category", flex: 1 },
+    { field: "col6", headerName: "Category ID", flex: 1 },
     { field: "col7", headerName: "Publish status", flex: 0.5 },
   ];
 
   // Columns data
-  const rows: GridRowsProp = [
-    {
-      id: 1,
-      col1: 1,
-      col2: "Telefon 1",
-      col3: "TL1",
-      col4: 25.4,
-      col5: 35,
-      col6: "Categorie de test 1",
-      col7: "Draft",
-    },
-  ];
+  const rows: GridRowsProp = products.map((product) => {
+    return {
+      id: product.id,
+      col1: product.id,
+      col2: product.name,
+      col3: product.sku,
+      col4: `${product.price} RON`,
+      col5: product.stock_qty,
+      col6: product.category_id,
+      col7: product.publish_status,
+    };
+  });
 
   if (!products.length)
     return (
@@ -66,14 +67,19 @@ export default function Products({ products }: IProps): ReactElement {
   );
 }
 
+import { getProducts, getTokenFromCookie } from "src/functions";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const authRes: any = await checkAuth(context);
+  const { req } = context;
   let { redirect, props } = authRes;
 
   if (redirect) return authRes;
 
-  // get products... (waiting for backend controller to be created)
-  const products: any = [];
+  const productsRes: any = await getProducts(
+    getTokenFromCookie(req.headers.cookie as string)
+  );
+
+  const products: IProduct[] = productsRes.products; // array of products
   props = { ...props, products };
 
   return {

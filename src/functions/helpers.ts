@@ -5,3 +5,7 @@ export const isStaff = (role: Role): role is StaffRole => {
 
   return false;
 };
+
+export const getTokenFromCookie = (cookie: string): string => {
+  return cookie.split("=")[1];
+};
