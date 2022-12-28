@@ -39,3 +39,18 @@ export const getCategories = async (accessToken?: string) => {
     },
   });
 };
+
+interface ICategoryData {
+  name: string;
+  slug: string;
+  publish_status: string;
+}
+
+/**
+ * @Docs Create category.
+ *
+ * @param {ICategoryData} data
+ */
+export const createCategory = async (data: ICategoryData) => {
+  return await axiosAuth.post("categories/create", data);
+};

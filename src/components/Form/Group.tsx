@@ -8,6 +8,7 @@ interface IProps {
   errors?: Record<string, string | undefined>;
   touched?: Record<string, boolean | undefined>;
   className?: string;
+  showInRow?: boolean;
 }
 
 // Modules
@@ -26,9 +27,12 @@ export default function Group({
   errors,
   touched,
   className,
+  showInRow,
 }: IProps): ReactElement {
   return (
-    <div className={cs(s.formGroup, "d-flex flex-column")}>
+    <div
+      className={cs(s.formGroup, `d-flex flex-${showInRow ? "row" : "column"}`)}
+    >
       <Label name={name} labelText={labelText} />
 
       <Field

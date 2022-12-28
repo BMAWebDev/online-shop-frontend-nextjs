@@ -1,5 +1,6 @@
 export type Role = "customer" | "editor" | "admin" | "ceo";
 export type StaffRole = "editor" | "admin" | "ceo";
+export type PublishStatus = "draft" | "live";
 
 export interface IUser {
   id: number;
