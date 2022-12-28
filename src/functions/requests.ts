@@ -1,5 +1,7 @@
 import { axiosAuth } from "src/lib";
 
+import { PublishStatus } from "src/types";
+
 /**
  * @Docs Read one user.
  *
@@ -43,7 +45,7 @@ export const getCategories = async (accessToken?: string) => {
 interface ICategoryData {
   name: string;
   slug: string;
-  publish_status: string;
+  publish_status: PublishStatus;
 }
 
 /**
@@ -53,4 +55,23 @@ interface ICategoryData {
  */
 export const createCategory = async (data: ICategoryData) => {
   return await axiosAuth.post("categories/create", data);
+};
+
+interface IProductData {
+  name: string;
+  sku: string;
+  price: number;
+  stock_qty: number;
+  slug: string;
+  category_id: number;
+  publish_status: PublishStatus;
+}
+
+/**
+ * @Docs Create product.
+ *
+ * @param {IProductData} data
+ */
+export const createProduct = async (data: IProductData) => {
+  return await axiosAuth.post("products/create", data);
 };

@@ -7,6 +7,7 @@ import {
   getProducts,
   getCategories,
   createCategory,
+  createProduct,
 } from "./requests";
 
 // Helpers
@@ -22,4 +23,5 @@ export {
   getCategories,
   getProducts,
   createCategory,
+  createProduct,
 };
