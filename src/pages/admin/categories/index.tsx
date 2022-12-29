@@ -9,8 +9,7 @@ interface IProps {
 }
 
 // Components
-import { Table } from "src/components";
-import { Button } from "src/components";
+import { Table, Button } from "src/components";
 
 // Modules
 import Link from "next/link";
@@ -23,8 +22,7 @@ export default function Categories({ categories }: IProps): ReactElement {
     { field: "col1", headerName: "ID", width: 50 },
     { field: "col2", headerName: "Name", flex: 1 },
     { field: "col3", headerName: "Total products", flex: 0.5 },
-    { field: "col4", headerName: "Available products", flex: 0.5 },
-    { field: "col5", headerName: "Publish status", flex: 0.5 },
+    { field: "col4", headerName: "Publish status", flex: 0.5 },
   ];
 
   // Columns data
@@ -33,9 +31,8 @@ export default function Categories({ categories }: IProps): ReactElement {
       id: category.id,
       col1: category.id,
       col2: category.name,
-      col3: 3,
-      col4: 2,
-      col5: category.publish_status,
+      col3: category.total_products,
+      col4: category.publish_status,
     };
   });
 
@@ -58,7 +55,7 @@ export default function Categories({ categories }: IProps): ReactElement {
         </Button>
       </Link>
 
-      <Table columns={columns} rows={rows} />
+      <Table tableType="categories" columns={columns} rows={rows} />
     </div>
   );
 }

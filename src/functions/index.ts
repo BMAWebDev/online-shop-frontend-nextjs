@@ -8,6 +8,8 @@ import {
   getCategories,
   createCategory,
   createProduct,
+  deleteCategory,
+  deleteProduct,
 } from "./requests";
 
 // Helpers
@@ -24,4 +26,6 @@ export {
   getProducts,
   createCategory,
   createProduct,
+  deleteCategory,
+  deleteProduct,
 };

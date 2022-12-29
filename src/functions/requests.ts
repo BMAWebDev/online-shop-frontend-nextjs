@@ -57,6 +57,15 @@ export const createCategory = async (data: ICategoryData) => {
   return await axiosAuth.post("categories/create", data);
 };
 
+/**
+ * @Docs Delete category.
+ *
+ * @param {number} category_id
+ */
+export const deleteCategory = async (category_id: number) => {
+  return await axiosAuth.delete(`categories/${category_id}`);
+};
+
 interface IProductData {
   name: string;
   sku: string;
@@ -74,4 +83,13 @@ interface IProductData {
  */
 export const createProduct = async (data: IProductData) => {
   return await axiosAuth.post("products/create", data);
+};
+
+/**
+ * @Docs Delete product.
+ *
+ * @param {number} product_id
+ */
+export const deleteProduct = async (product_id: number) => {
+  return await axiosAuth.delete(`products/${product_id}`);
 };

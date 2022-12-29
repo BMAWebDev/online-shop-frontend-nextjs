@@ -28,6 +28,7 @@ export interface ICategory {
   slug: string;
   publish_status: string;
   created_at: string;
+  total_products: number;
 }
 
 export interface IProduct {

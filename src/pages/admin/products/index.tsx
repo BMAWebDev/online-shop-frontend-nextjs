@@ -38,7 +38,7 @@ export default function Products({ products }: IProps): ReactElement {
       col3: product.sku,
       col4: `${product.price} RON`,
       col5: product.stock_qty,
-      col6: product.category_id,
+      col6: product.category_id ? product.category_id : 0,
       col7: product.publish_status,
     };
   });
@@ -62,7 +62,7 @@ export default function Products({ products }: IProps): ReactElement {
         </Button>
       </Link>
 
-      <Table columns={columns} rows={rows} />
+      <Table tableType="products" columns={columns} rows={rows} />
     </div>
   );
 }

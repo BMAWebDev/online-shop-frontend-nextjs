@@ -28,15 +28,14 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Formik, Form } from "formik";
-
-import { setCookie, deleteCookie } from "cookies-next";
+import { toast, ToastContainer } from "react-toastify";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 
 // Models
 import { loginModel, loginInitialValues } from "src/models";
 
 // Functions
 import { login, isStaff } from "src/functions";
-import { toast, ToastContainer } from "react-toastify";
 
 // Store
 import userStore from "src/store";
@@ -53,7 +52,11 @@ export default function Header({ isPrivate }: IProps): ReactElement {
   const store = userStore();
 
   useEffect(() => {
-    if (typeof window !== "undefined" && store.user) {
+    if (
+      typeof window !== "undefined" &&
+      store.user &&
+      getCookie("access-token")
+    ) {
       setIsLoggedIn(true);
 
       setUser(store.user);
@@ -67,7 +70,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
   useEffect(() => {
     if (typeof window !== "undefined") {
       userStore.subscribe((state) => {
-        if (state.user) {
+        if (state.user && getCookie("access-token")) {
           setIsLoggedIn(true);
 
           setUser(state.user);
@@ -143,6 +146,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                     href={`/products?cat=${category.id}`}
                     as="/products"
                     key={category.id}
+                    onClick={() => setSelectedDropdown("")}
                   >
                     <li className={cs(s.productsDropdownElement)}>
                       {category.name}
@@ -151,7 +155,11 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                 );
               })}
 
-              <Link passHref={true} href="/products">
+              <Link
+                passHref={true}
+                href="/products"
+                onClick={() => setSelectedDropdown("")}
+              >
                 <li
                   className={cs(s.productsDropdownElement, s.viewAllProducts)}
                 >
@@ -162,7 +170,11 @@ export default function Header({ isPrivate }: IProps): ReactElement {
           )}
         </div>
 
-        <Link href="/contact" passHref={true}>
+        <Link
+          href="/contact"
+          passHref={true}
+          onClick={() => setSelectedDropdown("")}
+        >
           <p
             className={cs(
               s.cardElement,
@@ -205,13 +217,21 @@ export default function Header({ isPrivate }: IProps): ReactElement {
               className={cs(s.productsDropdown, s.menuDropdown)}
               onClick={(e) => e.stopPropagation()}
             >
-              <Link passHref={true} href="/admin/products">
+              <Link
+                passHref={true}
+                href="/admin/products"
+                onClick={() => setSelectedDropdown("")}
+              >
                 <li className={cs(s.productsDropdownElement)}>
                   See all products
                 </li>
               </Link>
 
-              <Link passHref={true} href="/admin/categories">
+              <Link
+                passHref={true}
+                href="/admin/categories"
+                onClick={() => setSelectedDropdown("")}
+              >
                 <li className={cs(s.productsDropdownElement)}>
                   See all categories
                 </li>
@@ -425,6 +445,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                     <Link
                       href={user && isStaff(user.role) ? "/admin" : "/profile"}
                       passHref={true}
+                      onClick={() => setSelectedDropdown("")}
                     >
                       <p>
                         Go to{" "}
