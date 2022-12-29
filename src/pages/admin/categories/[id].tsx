@@ -1,11 +1,15 @@
 // Types
 import { ReactElement } from "react";
-import { PublishStatus } from "src/types";
+import { PublishStatus, ICategory } from "src/types";
 
 interface ISubmitData {
   name: string;
   slug: string;
   publish_status: PublishStatus;
+}
+
+interface IProps {
+  category: ICategory;
 }
 
 // Modules
@@ -19,21 +23,26 @@ import { Group } from "src/components/Form";
 import { Button } from "src/components";
 
 // Models
-import { categoryModel, categoryInitialValues } from "src/models/category";
+import { categoryModel } from "src/models/category";
 
 // Functions
-import { createCategory } from "src/functions";
+import { getCategory, getTokenFromCookie, updateCategory } from "src/functions";
 
 // Auth
 import { checkAuth } from "src/auth";
 
-export default function CreateCategory(): ReactElement {
+export default function EditCategory({ category }: IProps): ReactElement {
   const router = useRouter();
+
+  const categoryInitialValues = {
+    name: category.name,
+    will_publish: category.publish_status == "live",
+  };
 
   return (
     <div style={{ maxWidth: "500px", margin: "100px auto 0" }}>
       <h1 className="text-center" style={{ fontSize: "26px" }}>
-        Add a new category
+        Update category {category.name}
       </h1>
 
       <Formik
@@ -48,7 +57,7 @@ export default function CreateCategory(): ReactElement {
           };
 
           try {
-            const res: any = await createCategory(data);
+            const res: any = await updateCategory(category.id, data);
             toast.success(res.message);
 
             router.push("/admin/categories");
@@ -79,7 +88,7 @@ export default function CreateCategory(): ReactElement {
               touched={touched}
             />
 
-            <Button type="submit">Add new category</Button>
+            <Button type="submit">Update</Button>
           </Form>
         )}
       </Formik>
@@ -102,5 +111,21 @@ export default function CreateCategory(): ReactElement {
 
 import { GetServerSideProps } from "next";
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  return await checkAuth(context);
+  const authRes: any = await checkAuth(context);
+  const { id } = context.query;
+  let { redirect, props } = authRes;
+
+  if (redirect) return authRes;
+
+  const categoryRes: any = await getCategory(
+    parseInt(id as string),
+    getTokenFromCookie(context.req.headers.cookie as string)
+  );
+
+  const category: ICategory = categoryRes.category;
+  props = { ...props, category };
+
+  return {
+    props,
+  };
 };

@@ -10,6 +10,10 @@ import {
   createProduct,
   deleteCategory,
   deleteProduct,
+  getCategory,
+  getProduct,
+  updateCategory,
+  updateProduct,
 } from "./requests";
 
 // Helpers
@@ -28,4 +32,8 @@ export {
   createProduct,
   deleteCategory,
   deleteProduct,
+  getCategory,
+  getProduct,
+  updateCategory,
+  updateProduct,
 };

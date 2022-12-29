@@ -93,3 +93,57 @@ export const createProduct = async (data: IProductData) => {
 export const deleteProduct = async (product_id: number) => {
   return await axiosAuth.delete(`products/${product_id}`);
 };
+
+/**
+ * @Docs Get category.
+ *
+ * @param {number} category_id
+ * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie
+ */
+export const getCategory = async (
+  category_id: number,
+  accessToken?: string
+) => {
+  return await axiosAuth.get(`categories/${category_id}`, {
+    data: {
+      token: accessToken ? accessToken : null,
+    },
+  });
+};
+
+/**
+ * @Docs Get product.
+ *
+ * @param {number} product_id
+ * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie
+ */
+export const getProduct = async (product_id: number, accessToken?: string) => {
+  return await axiosAuth.get(`products/${product_id}`, {
+    data: {
+      token: accessToken ? accessToken : null,
+    },
+  });
+};
+
+/**
+ * @Docs Update category.
+ *
+ * @param {number} category_id
+ * @param {ICategoryData} data
+ */
+export const updateCategory = async (
+  category_id: number,
+  data: ICategoryData
+) => {
+  return await axiosAuth.patch(`categories/${category_id}`, data);
+};
+
+/**
+ * @Docs Update product.
+ *
+ * @param {number} product_id
+ * @param {IProductData} data
+ */
+export const updateProduct = async (product_id: number, data: IProductData) => {
+  return await axiosAuth.patch(`products/${product_id}`, data);
+};

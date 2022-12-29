@@ -26,7 +26,7 @@ export interface ICategory {
   id: number;
   name: string;
   slug: string;
-  publish_status: string;
+  publish_status: PublishStatus;
   created_at: string;
   total_products: number;
 }
@@ -39,6 +39,6 @@ export interface IProduct {
   price: number;
   stock_qty: number;
   category_id: number;
-  publish_status: string;
+  publish_status: PublishStatus;
   created_at: string;
 }
