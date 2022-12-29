@@ -1,4 +1,4 @@
-import { axiosAuth } from "src/lib";
+import { axiosAuth, axios } from "src/lib";
 
 import { PublishStatus } from "src/types";
 
@@ -19,14 +19,17 @@ export const getUser = async (id: number, accessToken?: string) => {
 /**
  * @Docs Read all products.
  *
- * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie
+ * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie. Pass access token if you want to make a request as an admin (for dashboard purposes)
  */
 export const getProducts = async (accessToken?: string) => {
-  return await axiosAuth.get("products", {
-    data: {
-      token: accessToken ? accessToken : null,
-    },
-  });
+  if (accessToken)
+    return await axiosAuth.get("products", {
+      data: {
+        token: accessToken,
+      },
+    });
+
+  return await axios.get("products");
 };
 
 /**

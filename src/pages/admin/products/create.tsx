@@ -127,7 +127,7 @@ export default function CreateProduct({ categories }: IProps): ReactElement {
             />
 
             <Group
-              labelText="Publish category?"
+              labelText="Publish product?"
               name="will_publish"
               type="checkbox"
               showInRow
