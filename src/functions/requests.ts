@@ -123,13 +123,17 @@ interface IGetProduct {
  * @Docs Get product. One parameter is optional
  *
  * @param {IGetProduct} data
+ * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie
  */
-export const getProduct = async (data: IGetProduct) => {
+export const getProduct = async (data: IGetProduct, accessToken?: string) => {
   const { product_id, product_slug } = data;
 
   return await axios.get(`products/${product_id}`, {
     params: {
       slug: product_slug,
+    },
+    data: {
+      token: accessToken ? accessToken : null,
     },
   });
 };

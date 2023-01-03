@@ -200,7 +200,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const tokenFromCookie = getTokenFromCookie(req.headers.cookie as string);
 
   const productRes: any = await getProduct(
-    parseInt(id as string),
+    {
+      product_id: parseInt(id as string),
+    },
     tokenFromCookie
   );
   const product: IProduct = productRes.product;
