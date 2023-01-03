@@ -17,7 +17,7 @@ import {
 } from "./requests";
 
 // Helpers
-import { isStaff, getTokenFromCookie } from "./helpers";
+import { isStaff, getTokenFromCookie, getDate } from "./helpers";
 
 export {
   register,
@@ -36,4 +36,5 @@ export {
   getProduct,
   updateCategory,
   updateProduct,
+  getDate,
 };

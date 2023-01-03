@@ -3,17 +3,17 @@ import { CSSProperties, ReactElement } from "react";
 
 interface IProps {
   type?: "button" | "submit" | "reset";
-  buttonType?: "danger" | "alert";
+  buttonType?: "danger" | "success";
   isSmall?: boolean;
   onClick?: () => void;
   style?: CSSProperties;
+  disabled?: boolean;
   children: string;
 }
 
 // Styles
 import cs from "classnames";
 import s from "./style.module.scss";
-import { StyledJsxStyleRegistry } from "styled-jsx";
 
 export default function Button({
   type,
@@ -21,6 +21,7 @@ export default function Button({
   isSmall,
   onClick,
   style,
+  disabled,
   children,
 }: IProps): ReactElement {
   return (
@@ -28,11 +29,13 @@ export default function Button({
       className={cs(
         s.button,
         buttonType == "danger" ? s.buttonDanger : "",
+        buttonType == "success" ? s.buttonSuccess : "",
         isSmall ? s.buttonSmall : ""
       )}
       type={type ?? "button"}
       onClick={onClick}
       style={style}
+      disabled={disabled}
     >
       {children}
     </button>

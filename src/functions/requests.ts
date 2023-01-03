@@ -114,16 +114,22 @@ export const getCategory = async (
   });
 };
 
+interface IGetProduct {
+  product_id?: number;
+  product_slug?: string;
+}
+
 /**
- * @Docs Get product.
+ * @Docs Get product. One parameter is optional
  *
- * @param {number} product_id
- * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie
+ * @param {IGetProduct} data
  */
-export const getProduct = async (product_id: number, accessToken?: string) => {
-  return await axiosAuth.get(`products/${product_id}`, {
-    data: {
-      token: accessToken ? accessToken : null,
+export const getProduct = async (data: IGetProduct) => {
+  const { product_id, product_slug } = data;
+
+  return await axios.get(`products/${product_id}`, {
+    params: {
+      slug: product_slug,
     },
   });
 };

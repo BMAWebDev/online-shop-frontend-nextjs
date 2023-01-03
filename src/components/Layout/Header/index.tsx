@@ -1,6 +1,6 @@
 // Types
 import { ReactElement } from "react";
-import { IUser } from "src/types";
+import { IUser, ICartProduct, ICategory } from "src/types";
 type DropdownMenus = "account" | "cart" | "products";
 
 interface ILoginResponse {
@@ -21,6 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 // Components
 import Logo from "../Logo";
 import { Group } from "src/components/Form";
+import { Button } from "src/components";
 
 // Modules
 import { useRouter } from "next/router";
@@ -38,7 +39,7 @@ import { loginModel, loginInitialValues } from "src/models";
 import { login, isStaff } from "src/functions";
 
 // Store
-import userStore from "src/store";
+import { userStore, cartStore } from "src/store";
 
 export default function Header({ isPrivate }: IProps): ReactElement {
   const [selectedDropdown, setSelectedDropdown] = useState<DropdownMenus | "">(
@@ -47,23 +48,23 @@ export default function Header({ isPrivate }: IProps): ReactElement {
   const [myAccountText, setMyAccountText] = useState<string>("My account");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<IUser | null>(null);
+  const [cartProducts, setCartProducts] = useState<ICartProduct[]>([]);
 
   const router = useRouter();
   const store = userStore();
+  const cart = cartStore();
 
   useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      store.user &&
-      getCookie("access-token")
-    ) {
-      setIsLoggedIn(true);
+    if (typeof window !== "undefined") {
+      if (store.user && getCookie("access-token")) {
+        setIsLoggedIn(true);
 
-      setUser(store.user);
+        setUser(store.user);
 
-      setMyAccountText(
-        `Hello, ${store.user.last_name} ${store.user.first_name}`
-      );
+        setMyAccountText(
+          `Hello, ${store.user.last_name} ${store.user.first_name}`
+        );
+      }
     }
   }, [store]);
 
@@ -86,6 +87,12 @@ export default function Header({ isPrivate }: IProps): ReactElement {
           setMyAccountText("My account");
         }
       });
+
+      setCartProducts(cart.products);
+
+      cartStore.subscribe((state) => {
+        setCartProducts(state.products);
+      });
     }
   }, []);
 
@@ -97,23 +104,7 @@ export default function Header({ isPrivate }: IProps): ReactElement {
     return true;
   };
 
-  const productsCategories = [
-    {
-      name: "Articole de gradinarit",
-      slug: "articole-de-gradinarit",
-      id: 0,
-    },
-    {
-      name: "Teste de dev",
-      slug: "teste-de-dev",
-      id: 1,
-    },
-    {
-      name: "Test123",
-      slug: "test123",
-      id: 2,
-    },
-  ];
+  const productsCategories: ICategory[] = [];
 
   const defaultSecondLine = () => {
     return (
@@ -288,7 +279,24 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                 height={32}
               />
 
-              <p className={cs(s.hideMobile)}>My cart</p>
+              <p className={cs(s.hideMobile)}>
+                My cart
+                {cartProducts.length > 0 && (
+                  <span
+                    style={{
+                      background: "red",
+                      borderRadius: "100%",
+                      padding: "0px 5px",
+                      fontSize: "10px",
+                      position: "absolute",
+                      bottom: "0",
+                      left: "23px",
+                    }}
+                  >
+                    {cartProducts.length}
+                  </span>
+                )}
+              </p>
 
               <Image
                 src="/img/icons/arrow-down.svg"
@@ -306,18 +314,99 @@ export default function Header({ isPrivate }: IProps): ReactElement {
                   className={cs(s.cartDropdown, s.menuDropdown)}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Your cart is currently empty.{" "}
-                  <Link href="/products" passHref={true}>
-                    <span
-                      style={{
-                        color: "cyan",
-                        textDecoration: "underline",
-                      }}
-                    >
-                      Click here
-                    </span>
-                  </Link>{" "}
-                  to see the products available.
+                  {!cartProducts.length ? (
+                    <>
+                      Your cart is currently empty.{" "}
+                      <Link
+                        href="/products"
+                        passHref={true}
+                        onClick={() => setSelectedDropdown("")}
+                      >
+                        <span
+                          style={{
+                            color: "cyan",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Click here
+                        </span>
+                      </Link>{" "}
+                      to see the products available.
+                    </>
+                  ) : (
+                    <>
+                      <ul className="cartProducts">
+                        {cartProducts.map((product) => {
+                          return (
+                            <li
+                              key={product.id}
+                              className="d-flex align-items-center"
+                              style={{ gap: "15px" }}
+                            >
+                              <Link
+                                href={`/products/${product.full_product.slug}`}
+                                passHref={true}
+                                onClick={() => setSelectedDropdown("")}
+                              >
+                                <Image
+                                  src="/img/default-product.jpg"
+                                  width={64}
+                                  height={64}
+                                  alt="default product icon"
+                                />
+                              </Link>
+
+                              <div className="details">
+                                <p>{product.full_product.name}</p>
+                                <p>{product.full_product.price} RON</p>
+                                <p>Qty: {product.quantity}</p>
+
+                                <div
+                                  className="buttonsContainer d-flex"
+                                  style={{ gap: "30px" }}
+                                >
+                                  <Link
+                                    href={`/products/${product.full_product.slug}`}
+                                    passHref={true}
+                                    style={{ width: "100%" }}
+                                    onClick={() => setSelectedDropdown("")}
+                                  >
+                                    <Button style={{ width: "100%" }}>
+                                      View
+                                    </Button>
+                                  </Link>
+
+                                  <Button
+                                    buttonType="danger"
+                                    style={{ width: "100%" }}
+                                    onClick={() => {
+                                      setSelectedDropdown("");
+
+                                      cart.removeProduct(
+                                        product.full_product.id
+                                      );
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+
+                      <Link
+                        href="/cart"
+                        passHref
+                        onClick={() => setSelectedDropdown("")}
+                      >
+                        <Button buttonType="success" style={{ width: "100%" }}>
+                          View cart
+                        </Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
             </div>

@@ -42,3 +42,9 @@ export interface IProduct {
   publish_status: PublishStatus;
   created_at: string;
 }
+
+export interface ICartProduct {
+  id: number;
+  quantity: number;
+  full_product: IProduct;
+}

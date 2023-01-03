@@ -4,20 +4,23 @@ import {
   GridRowsProp,
   GridColDef,
   GridRenderCellParams,
+  GridFooterContainer,
+  GridFooter,
 } from "@mui/x-data-grid";
 import Link from "next/link";
 import Modal from "./Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/router";
 
 // Types
 import { ReactElement } from "react";
+import { ICartStoreProps } from "src/store/cart";
 
 interface IProps {
   columns: GridColDef[];
   rows: GridRowsProp;
-  tableType: "products" | "categories";
+  tableType: "products" | "categories" | "cart";
 }
 
 // Components
@@ -25,6 +28,9 @@ import Button from "./Button";
 
 // Functions
 import { deleteCategory, deleteProduct } from "src/functions";
+
+// Store
+import { cartStore } from "src/store";
 
 export default function Table({
   columns,
@@ -37,8 +43,78 @@ export default function Table({
 
   const router = useRouter();
 
-  // custom column for quick options
-  const renderQuickOptions = (params: GridRenderCellParams) => {
+  // CART START
+  const [cartTotalPrice, setCartTotalPrice] = useState<string>("0.00");
+  const cart = cartStore();
+
+  const calculateCartPrice = (cart: ICartStoreProps): string => {
+    let totalProductsPrice = 0;
+    cart.products.forEach((product) => {
+      totalProductsPrice += product.quantity * product.full_product.price;
+    });
+
+    return totalProductsPrice.toFixed(2);
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCartTotalPrice(calculateCartPrice(cart));
+
+      cartStore.subscribe((state) => {
+        setCartTotalPrice(calculateCartPrice(state));
+      });
+    }
+  }, [cart.products]);
+
+  // custom column for client quick options
+  const clientRenderQuickOptions = (params: GridRenderCellParams) => {
+    const productSlug = params.row.slug;
+    const productName = params.row.col2;
+    const productID = parseInt(params.id as string);
+
+    return (
+      <div className="d-flex align-items-center" style={{ gap: "15px" }}>
+        <Link href={`/products/${productSlug}`} passHref={true}>
+          <Button isSmall>View</Button>
+        </Link>
+
+        <Button
+          buttonType="danger"
+          onClick={() => {
+            setShowModal(true);
+            setModalCustomText(
+              `Are you sure you want to delete ${productName} from your cart?`
+            );
+            setModalHandlerValue(productID as number);
+          }}
+          isSmall
+        >
+          Delete
+        </Button>
+      </div>
+    );
+  };
+
+  // footer for cart page
+  const renderCustomFooter = () => {
+    return (
+      <GridFooterContainer>
+        <p style={{ marginLeft: "15px" }}>
+          Products total price: {cartTotalPrice} RON
+        </p>
+
+        <GridFooter
+          sx={{
+            border: "none",
+          }}
+        />
+      </GridFooterContainer>
+    );
+  };
+  // CART END
+
+  // custom column for admin quick options
+  const adminRenderQuickOptions = (params: GridRenderCellParams) => {
     const rowID = params.id;
     const rowName = params.row.col2;
 
@@ -82,7 +158,10 @@ export default function Table({
       field: "col",
       headerName: "Quick options",
       flex: 1,
-      renderCell: (params: GridRenderCellParams) => renderQuickOptions(params),
+      renderCell: (params: GridRenderCellParams) =>
+        tableType === "cart"
+          ? clientRenderQuickOptions(params)
+          : adminRenderQuickOptions(params),
     },
   ];
 
@@ -91,6 +170,14 @@ export default function Table({
   };
 
   const handleDelete = async (row_id: number) => {
+    if (tableType === "cart") {
+      cart.removeProduct(row_id);
+
+      router.reload();
+
+      return null;
+    }
+
     try {
       const deleteRes: any =
         tableType == "categories"
@@ -136,6 +223,9 @@ export default function Table({
           fontSize: 16,
         }}
         getRowHeight={() => "auto"}
+        components={{
+          Footer: tableType !== "cart" ? undefined : renderCustomFooter,
+        }}
       />
 
       <Modal

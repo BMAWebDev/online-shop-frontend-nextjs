@@ -1,3 +1,5 @@
+@import "../styles/colors";
+
 .button {
   background: #f6ca53;
   box-shadow: 0 0 10px #f6ca53;
@@ -15,6 +17,15 @@
 
     &:hover {
       background: #f73b69;
+    }
+  }
+
+  &.buttonSuccess {
+    background: $success;
+    box-shadow: 0 0 10px $success;
+
+    &:hover {
+      background: #38c93c;
     }
   }
 
