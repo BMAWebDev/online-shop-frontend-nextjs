@@ -47,6 +47,7 @@ export default function Products(): ReactElement {
                     alt="default product picture"
                     fill
                     style={{ objectFit: "cover" }}
+                    priority
                   />
                 </div>
 

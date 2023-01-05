@@ -1,6 +1,6 @@
 import { axiosAuth, axios } from "src/lib";
 
-import { PublishStatus } from "src/types";
+import { ICartProduct, PublishStatus } from "src/types";
 
 /**
  * @Docs Read one user.
@@ -159,4 +159,23 @@ export const updateCategory = async (
  */
 export const updateProduct = async (product_id: number, data: IProductData) => {
   return await axiosAuth.patch(`products/${product_id}`, data);
+};
+
+interface IOrderData {
+  last_name: string;
+  first_name: string;
+  email: string;
+  address: string;
+  shipping_method: string;
+  payment_method: "credit card" | "debit card" | "cash on delivery";
+  products: ICartProduct[];
+  user_id?: number;
+}
+/**
+ * @Docs Create order.
+ *
+ * @param {IProductData} data
+ */
+export const createOrder = async (data: IOrderData) => {
+  return await axios.post("orders/create", data);
 };

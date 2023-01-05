@@ -14,10 +14,16 @@ import {
   getProduct,
   updateCategory,
   updateProduct,
+  createOrder,
 } from "./requests";
 
 // Helpers
-import { isStaff, getTokenFromCookie, getDate } from "./helpers";
+import {
+  isStaff,
+  getTokenFromCookie,
+  getDate,
+  calculateCartPrice,
+} from "./helpers";
 
 export {
   register,
@@ -37,4 +43,6 @@ export {
   updateCategory,
   updateProduct,
   getDate,
+  calculateCartPrice,
+  createOrder,
 };
