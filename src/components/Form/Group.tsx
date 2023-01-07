@@ -35,12 +35,25 @@ export default function Group({
     >
       <Label name={name} labelText={labelText} />
 
-      <Field
-        type={type ?? "text"}
-        id={name}
-        name={name}
-        className={cs(s.input, className && `${className}`)}
-      />
+      {type == "textarea" && (
+        <Field
+          component="textarea"
+          rows="4"
+          id={name}
+          name={name}
+          className={cs(s.input, className && `${className}`)}
+          style={{ minHeight: "150px" }}
+        />
+      )}
+
+      {type !== "textarea" && (
+        <Field
+          type={type ?? "text"}
+          id={name}
+          name={name}
+          className={cs(s.input, className && `${className}`)}
+        />
+      )}
 
       <Error name={name} errors={errors} touched={touched} />
     </div>

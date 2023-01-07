@@ -179,3 +179,18 @@ interface IOrderData {
 export const createOrder = async (data: IOrderData) => {
   return await axios.post("orders/create", data);
 };
+
+interface IContactMessageData {
+  last_name: string;
+  first_name: string;
+  email: string;
+  message: string;
+}
+/**
+ * @Docs Create order.
+ *
+ * @param {IProductData} data
+ */
+export const createContactMessage = async (data: IContactMessageData) => {
+  return await axios.post("contact/create", data);
+};

@@ -15,6 +15,7 @@ import {
   updateCategory,
   updateProduct,
   createOrder,
+  createContactMessage,
 } from "./requests";
 
 // Helpers
@@ -45,4 +46,5 @@ export {
   getDate,
   calculateCartPrice,
   createOrder,
+  createContactMessage,
 };
