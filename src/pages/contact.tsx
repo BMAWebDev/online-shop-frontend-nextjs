@@ -27,7 +27,7 @@ export default function Contact(): ReactElement {
     <div className="container">
       <div className="row">
         <h1 style={{ fontFamily: "Epilogue", fontWeight: "700" }}>
-          Let's get in touch
+          Let&apos;s get in touch
         </h1>
 
         <h2 style={{ fontSize: "20px", lineHeight: "26px", fontWeight: "500" }}>
