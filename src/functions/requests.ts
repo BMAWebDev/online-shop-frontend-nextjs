@@ -20,16 +20,22 @@ export const getUser = async (id: number, accessToken?: string) => {
  * @Docs Read all products.
  *
  * @param {string} accessToken optional, present if request was made on server, where you can't normally access the cookie. Pass access token if you want to make a request as an admin (for dashboard purposes)
+ * @param {Object} options optional, present if you want to pass options for pagination purposes like limit or offset.
  */
-export const getProducts = async (accessToken?: string) => {
+export const getProducts = async (accessToken?: string, options?: Object) => {
   if (accessToken)
     return await axiosAuth.get("products", {
       data: {
         token: accessToken,
+        ...options,
       },
     });
 
-  return await axios.get("products");
+  return await axios.get("products", {
+    data: {
+      ...options,
+    },
+  });
 };
 
 /**
