@@ -1,64 +1,35 @@
 // Types
 import { ReactElement } from "react";
 import { GetServerSideProps } from "next";
-import { IProduct } from "src/types";
-
-interface IProps {
-  latestProducts: IProduct[];
-}
-
-// Modules
-import Image from "next/image";
-import Link from "next/link";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper";
-// import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/bundle";
+import { IProps } from "src/components/Homepage/types";
 
 // Functions
-import { getProducts } from "src/functions";
+import { getProducts, getAnalytics } from "src/functions";
 
-// Styles
+// Components
+import { LatestProducts, Analytics } from "src/components/Homepage/components";
+import { Spacer } from "src/components";
 
-import cs from "classnames";
-import s from "src/components/Homepage/style.module.scss";
+export default function Homepage({
+  latestProducts,
+  analytics,
+}: IProps): ReactElement {
+  const { registered_accounts, total_orders, finished_orders } = analytics;
 
-export default function Homepage({ latestProducts }: IProps): ReactElement {
   return (
-    <div className={cs(s.latestProducts, "container")}>
-      <div className="row">
-        <h2>Latest products</h2>
+    <>
+      <LatestProducts latestProducts={latestProducts} />
 
-        <Swiper
-          spaceBetween={50}
-          slidesPerView={1}
-          modules={[Navigation]}
-          navigation
-        >
-          {latestProducts.map((product) => {
-            return (
-              <SwiperSlide key={product.id}>
-                <Link href={`/products/${product.slug}`} passHref={true}>
-                  <div className={cs(s.thumbnailContainer)}>
-                    <h3 className={cs(s.latestProductsTitle)}>
-                      {product.name}
-                    </h3>
+      <Spacer />
 
-                    <Image
-                      src="/img/default-product.jpg"
-                      alt="default product icon"
-                      fill
-                      style={{ objectFit: "cover" }}
-                    />
-                  </div>
-                </Link>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </div>
-    </div>
+      <Analytics
+        registered_accounts={registered_accounts}
+        total_orders={total_orders}
+        finished_orders={finished_orders}
+      />
+
+      <Spacer />
+    </>
   );
 }
 
@@ -69,9 +40,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   const { products } = latestProductsRes;
 
+  const analyticsRes: any = await getAnalytics();
+  const { analytics } = analyticsRes;
+
   return {
     props: {
       latestProducts: products,
+      analytics,
     },
   };
 };

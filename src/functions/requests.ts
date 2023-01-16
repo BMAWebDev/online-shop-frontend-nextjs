@@ -200,3 +200,10 @@ interface IContactMessageData {
 export const createContactMessage = async (data: IContactMessageData) => {
   return await axios.post("contact/create", data);
 };
+
+/**
+ * @Docs Get all analytics.
+ */
+export const getAnalytics = async () => {
+  return await axios.get("analytics");
+};
