@@ -48,3 +48,19 @@ export interface ICartProduct {
   quantity: number;
   full_product: IProduct;
 }
+
+export interface IOrder {
+  id: number;
+  last_name: string;
+  first_name: string;
+  email: string;
+  address: string;
+  price_products: number;
+  price_taxes: number;
+  price_total: number;
+  status: string;
+  shipping_method: string;
+  payment_method: string;
+  customer_id?: number;
+  created_at: string;
+}

@@ -1,6 +1,8 @@
 $active-color: #615b5b;
 
 .header {
+  z-index: 2;
+
   .menuDropdown {
     position: absolute;
     top: 50px;

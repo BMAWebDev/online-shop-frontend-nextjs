@@ -17,6 +17,7 @@ import {
   createOrder,
   createContactMessage,
   getAnalytics,
+  getOrdersAnalytics,
 } from "./requests";
 
 // Helpers
@@ -49,4 +50,5 @@ export {
   createOrder,
   createContactMessage,
   getAnalytics,
+  getOrdersAnalytics,
 };

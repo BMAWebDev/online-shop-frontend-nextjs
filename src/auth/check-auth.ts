@@ -16,7 +16,11 @@ const checkAuth: GetServerSideProps = async (
   context,
   redirectDestination = "/"
 ) => {
-  const cookie = context.req.headers.cookie;
+  console.log(context.req.headers.cookie);
+
+  const cookie = context.req.headers.cookie
+    ?.split(";")
+    .find((c) => c.includes("access-token"));
 
   const redirectOBJ = {
     redirect: {

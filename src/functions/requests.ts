@@ -207,3 +207,10 @@ export const createContactMessage = async (data: IContactMessageData) => {
 export const getAnalytics = async () => {
   return await axios.get("analytics");
 };
+
+/**
+ * @Docs Get orders analytics.
+ */
+export const getOrdersAnalytics = async () => {
+  return await axios.get("analytics/orders");
+};
